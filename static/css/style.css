@@ -3,3 +3,45 @@
     text-align: center;
     line-height: normal;
 }
+
+/* ---------------------------------step 8--------------------------------------- */
+.navbar-default {
+	background-image: none;
+	margin-bottom: 0;
+}
+
+.section-heading, #discipline-selector {
+	display: inline-block;	
+	float: none;
+	margin: 0;
+}
+
+.section-heading {
+	margin-bottom: 50px;
+}
+
+#discipline-selector {
+	margin-left: 15px;
+}
+
+.number-box, .fa.fa-gender {
+    font-size: 30px;
+    font-weight: 500;
+}
+
+.fa-gender {
+	margin-right: 10px;
+}
+
+.custom-chart {
+	margin-bottom: 40px;
+}
+
+.section {
+	border-bottom: 1px solid #e6e6e6;
+	padding: 30px 0;
+}
+
+.section-paragraph {
+	line-height: 1.2;
+}
