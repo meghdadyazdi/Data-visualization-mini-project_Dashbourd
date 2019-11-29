@@ -9,6 +9,7 @@ function makeGraphs(error, salaryData) {
 
     salaryData.forEach(function(d){      // Salary data is in text //-------------step 3-------------
         d.salary = parseInt(d.salary);
+        d.yrs_service = parseInt(d["yrs.service"]); //-------------step 6-------------
     })
 
     
@@ -19,6 +20,10 @@ function makeGraphs(error, salaryData) {
 
     show_percent_that_are_professors(ndx, "Female", "#percent-of-women-professors"); //-------------step 5-------------
     show_percent_that_are_professors(ndx, "Male", "#percent-of-men-professors"); //-------------step 5-------------
+
+    
+    // ُScatter plots are ideal for showing the correlation between two different data items.
+    show_service_to_salary_correlation(ndx); //-------------step 6-------------
 
 
 
@@ -194,4 +199,49 @@ function show_percent_that_are_professors(ndx, gender, element) {
             }
         })
         .group(percentageThatAreProf)
+}
+
+
+// ---------------------------------step 6---------------------------------------
+function show_service_to_salary_correlation(ndx) {
+    
+    var genderColors = d3.scale.ordinal()
+        .domain(["Female", "Male"])
+        .range(["pink", "blue"]);
+
+    // The first dimension is going to be on years of service,
+    // and we only use this to work out the bounds of the x-axis,
+    // the minimum and maximum years of service that we need to plot.
+    var eDim = ndx.dimension(dc.pluck("yrs_service"));
+
+    // The second dimension that we create actually returns an array with two parts: one being the years of service, and the other being the salary.
+    // And this is what allows us to plot the dots of the scatter plot at the right x and y coordinates.
+    // So eDim here is just a simple pluck on the years of service.
+    // And experienceDim is going to use a function here to extract the two pieces of information that we need for plotting the dots.
+    var experienceDim = ndx.dimension(function(d) {
+       return [d.yrs_service, d.salary, d.rank, d.sex];
+    });
+    var experienceSalaryGroup = experienceDim.group();
+    
+    var minExperience = eDim.bottom(1)[0].yrs_service;
+    var maxExperience = eDim.top(1)[0].yrs_service;
+    
+    dc.scatterPlot("#service-salary")
+        .width(800)
+        .height(400)
+        .x(d3.scale.linear().domain([minExperience, maxExperience]))
+        .brushOn(true)
+        .symbolSize(8)
+        .clipPadding(10)
+        .xAxisLabel("Years Of Service")
+        .title(function(d) {
+            return d.key[2] + " earned " + d.key[1];
+        })
+        .colorAccessor(function (d) { //All the colorAccessor() does is decide which piece of data we use as an input into our genderColors scale
+            return d.key[3];
+        })
+        .colors(genderColors)
+        .dimension(experienceDim)
+        .group(experienceSalaryGroup)
+        .margins({top: 10, right: 50, bottom: 75, left: 75});
 }
